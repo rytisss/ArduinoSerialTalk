@@ -39,5 +39,14 @@ void ArduinoSerialWindow::RenderInternal()
 	{
 		ImGui::Text(m_coms[i].c_str());
 	}
+	if (ImGui::Button("Start Listening"))
+	{
+		// pick last
+		if (m_coms.size() > 0)
+		{
+			SerialCommander commander;
+			commander.StartListening(m_coms[m_coms.size() - 1]);
+		}
+	}
 	ImGui::End();
 }

@@ -16,6 +16,7 @@
 #endif
 #include <vector>
 #include <string>
+#include <boost/asio.hpp>
 
 //class that does nothing
 class SERIALCOMMANDER_API SerialCommander
@@ -23,6 +24,7 @@ class SERIALCOMMANDER_API SerialCommander
 public:
 	SerialCommander();
 	~SerialCommander();
+	void StartListening(std::string com);
 	static std::vector<std::string> GetComports();
 };
 
