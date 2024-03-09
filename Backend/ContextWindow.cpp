@@ -8,8 +8,8 @@
 #include "imgui.h"
 
  
-#define MINVIEWPORTWIDTH 1600
-#define MINVIEWPORTHEIGHT 900
+#define MINVIEWPORTWIDTH 600
+#define MINVIEWPORTHEIGHT 600
 
 ContextWindow::ContextWindow()
 	: m_backgroundColor(0.01f, 0.6f, 0.99f, 1.0f)
@@ -73,7 +73,7 @@ int ContextWindow::Init()
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 
 	// Setup Dear ImGui style
-	ActivateStyle();
+	//ActivateStyle();
     // load font
     LoadFont();
 
@@ -92,6 +92,9 @@ int ContextWindow::Init()
         t.read(&config[0], size);
         this->SetConfig(config);
     }
+
+    m_arduinoWindow.Init(GetTextureID());
+
 	return 0;
 }
 int ContextWindow::Run()
@@ -103,6 +106,7 @@ int ContextWindow::Run()
 	ImGuiIO& io = ImGui::GetIO();
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	// Main loop
+    bool firstTime = true;
 	while (!glfwWindowShouldClose(m_window))
 	{
 		std::chrono::time_point<std::chrono::system_clock> startTimePoint = std::chrono::system_clock::now();
@@ -120,6 +124,9 @@ int ContextWindow::Run()
 
 		//Dock space
 		ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
+
+       // ImGui::SetNextWindowPos(ImVec2(0.f, 0.f), ImGuiCond_Once);
+        //m_arduinoWindow.Render();
 
 		// Rendering
 		ImGui::Render();
@@ -145,6 +152,8 @@ void ContextWindow::Deinit()
     std::ofstream configFile("config.json");
     configFile << config;
     configFile.close();
+    //
+    m_arduinoWindow.Deinit();
 	// Cleanup
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();

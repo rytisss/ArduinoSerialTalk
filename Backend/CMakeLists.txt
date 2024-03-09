@@ -40,6 +40,8 @@ add_library(Backend SHARED
 	GraphicalBackendImpl.cpp
 	ContextWindow.h
 	ContextWindow.cpp
+	ArduinoSerialWindow.h
+	ArduinoSerialWindow.cpp
 	..//Base//GraphicalElement.h
 	..//Base//GraphicalElement.cpp
 	)

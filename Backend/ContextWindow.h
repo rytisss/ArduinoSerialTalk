@@ -26,6 +26,8 @@
 // Include glfw3.h after our OpenGL definitions
 #include <GLFW/glfw3.h>
 
+#include "ArduinoSerialWindow.h"
+
 #include <mutex>
 
 
@@ -58,6 +60,8 @@ public:
     std::string m_configPath;
 	//current ID
 	unsigned int m_textureID;
+	//
+	ArduinoSerialWindow m_arduinoWindow;
 };
 
 #endif //CONTEXTWINDOW_H
