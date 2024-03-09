@@ -24,6 +24,7 @@ include_directories(
 	..//Core//
 	..//Base//
 	..//Utilities//
+	..//SerialCommander//
 	..//imgui//
 	..//imgui//imgui//
 	..//imgui//imgui//examples//
@@ -50,6 +51,7 @@ target_link_libraries(Backend PRIVATE
 	Utilities
 	Core
 	imgui
+	SerialCommander
 	${OPENGL_LIBRARIES}
 	${Boost_LIBRARIES}
 	)
@@ -57,4 +59,5 @@ target_link_libraries(Backend PRIVATE
 add_dependencies(Backend
 	Utilities
 	Core
+	SerialCommander
 	)

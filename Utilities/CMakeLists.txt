@@ -23,8 +23,6 @@ add_library(${PROJECT_NAME}
 	DataParseUtil.cpp
 	Timer.h
 	Timer.cpp
-	Frame.h
-	Frame.cpp
 	NiftyMath.h
 	NiftyMath.cpp
 	tinyfiledialogs/tinyfiledialogs.h

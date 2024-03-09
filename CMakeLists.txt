@@ -20,5 +20,6 @@ add_subdirectory(Backend)
 add_subdirectory(Core)
 add_subdirectory(Utilities)
 add_subdirectory(imgui)
+add_subdirectory(SerialCommander)
 add_subdirectory(imgui//third_party)
 
