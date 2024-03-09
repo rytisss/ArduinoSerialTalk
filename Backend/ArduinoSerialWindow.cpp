@@ -20,9 +20,6 @@ void ArduinoSerialWindow::SetConfig(std::string& config)
 
 void ArduinoSerialWindow::InitInternal()
 {
-	ImGui::Begin("Arduino Serial", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse);
-	ImGui::Text("Implement...");
-	ImGui::End();
 }
 
 void ArduinoSerialWindow::DeinitInternal()
@@ -31,4 +28,7 @@ void ArduinoSerialWindow::DeinitInternal()
 
 void ArduinoSerialWindow::RenderInternal()
 {
+	ImGui::Begin("Arduino Serial", NULL, ImGuiWindowFlags_NoCollapse);
+	ImGui::Text("Implement...");
+	ImGui::End();
 }

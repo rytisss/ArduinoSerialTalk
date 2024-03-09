@@ -122,11 +122,11 @@ int ContextWindow::Run()
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
+        ImGui::SetNextWindowPos(ImVec2(0.f, 0.f), ImGuiCond_Once);
+        m_arduinoWindow.Render();
+
 		//Dock space
 		ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
-
-       // ImGui::SetNextWindowPos(ImVec2(0.f, 0.f), ImGuiCond_Once);
-        //m_arduinoWindow.Render();
 
 		// Rendering
 		ImGui::Render();
