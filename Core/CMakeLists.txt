@@ -33,5 +33,3 @@ add_library(Core SHARED
 target_link_libraries(Core PRIVATE
 	${OpenCV_LIBS}
 	${Boost_LIBRARIES})
-
-

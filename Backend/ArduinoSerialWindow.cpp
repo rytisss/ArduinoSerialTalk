@@ -30,5 +30,14 @@ void ArduinoSerialWindow::RenderInternal()
 {
 	ImGui::Begin("Arduino Serial", NULL, ImGuiWindowFlags_NoCollapse);
 	ImGui::Text("Implement...");
+	if (ImGui::Button("Scan COM ports"))
+	{
+		m_coms = SerialCommander::GetComports();
+	}
+	ImGui::Text("Available COMs:");
+	for (size_t i = 0; i < m_coms.size(); i++)
+	{
+		ImGui::Text(m_coms[i].c_str());
+	}
 	ImGui::End();
 }

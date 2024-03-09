@@ -14,6 +14,8 @@
 //  GCC
 #define SERIALCOMMANDER __attribute__((visibility("default")))
 #endif
+#include <vector>
+#include <string>
 
 //class that does nothing
 class SERIALCOMMANDER_API SerialCommander
@@ -21,6 +23,7 @@ class SERIALCOMMANDER_API SerialCommander
 public:
 	SerialCommander();
 	~SerialCommander();
+	static std::vector<std::string> GetComports();
 };
 
 #endif //SERIALCOMMANDER_H
