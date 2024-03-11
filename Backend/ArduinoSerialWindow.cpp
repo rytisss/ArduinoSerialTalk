@@ -29,7 +29,6 @@ void ArduinoSerialWindow::DeinitInternal()
 void ArduinoSerialWindow::RenderInternal()
 {
 	ImGui::Begin("Arduino Serial", NULL, ImGuiWindowFlags_NoCollapse);
-	ImGui::Text("Implement...");
 	if (ImGui::Button("Scan COM ports"))
 	{
 		m_commander.ScanForComPorts();
@@ -46,13 +45,60 @@ void ArduinoSerialWindow::RenderInternal()
 		}
 	}
 	m_coms = m_commander.GetComports();
-	ImGui::Text("Available COMs:");
-	for (size_t i = 0; i < m_coms.size(); i++)
+
+	static int selectedComPortIndex = -1;
+	if (m_coms.size() > 0)
 	{
-		ImGui::Text(m_coms[i].c_str());
+		for (int n = 0; n < m_coms.size(); n++)
+		{
+			if (ImGui::Selectable(m_coms[n].c_str(), selectedComPortIndex == n))
+			{
+				selectedComPortIndex = n;
+			}
+		}
+		if (!m_commander.IsListening())
+		{
+			if (selectedComPortIndex != -1)
+			{
+				if (ImGui::Button("Start Listening"))
+				{
+					if (selectedComPortIndex >= 0 && selectedComPortIndex < m_coms.size())
+					{
+						m_commander.StartListening(m_coms[selectedComPortIndex]);
+					}
+				}
+			}
+		}
+		else
+		{
+			if (ImGui::Button("Stop Listening"))
+			{
+				m_commander.StopListening();
+			}
+		}
 	}
-	if (ImGui::Button("Start Listening"))
+	if (m_commander.IsListening())
 	{
+		if (ImGui::Button("Start"))
+		{
+			m_commander.SendCommand("start");
+		}
+		if (ImGui::Button("Stop"))
+		{
+			m_commander.SendCommand("stop");
+		}
+		if (ImGui::Button("Calibrate"))
+		{
+			m_commander.SendCommand("calibrate");
+		}
+		if (ImGui::Button("Position"))
+		{
+			m_commander.SendCommand("position");
+		}
+		if (ImGui::Button("Singlerun"))
+		{
+			m_commander.SendCommand("singlerun");
+		}
 	}
 	ImGui::End();
 }

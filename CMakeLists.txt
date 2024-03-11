@@ -2,6 +2,8 @@ cmake_minimum_required (VERSION 3.17.0)
 project (ArduinoSerialTalk)
 set(CMAKE_CXX_STANDARD 20)
 
+add_compile_definitions(-D_WIN32_WINNT=0x0601)
+
 if (APPLE)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden")
     add_definitions( -DCMAKE_APPLE_SILICON_PROCESSOR=arm64 )

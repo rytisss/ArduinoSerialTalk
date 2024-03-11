@@ -9,6 +9,8 @@ using namespace boost::asio;
 
 SerialCommander::SerialCommander()
     : m_comPortsAreScanned(false)
+    , m_isComPortListened(false)
+    , m_port(m_io)
 {
 }
 
@@ -18,46 +20,71 @@ SerialCommander::~SerialCommander()
 
 void SerialCommander::StartListening(std::string com)
 {
-    try {
-        io_service io;
-        serial_port port(io);
+    if (m_isComPortListened)
+    {
+        return;
+    }
+    std::thread listeningThread = std::thread(&SerialCommander::StartListeningSync, this, com);
+    listeningThread.detach();
+}
 
-        port.open(com); // Change this to your Arduino's serial port
+void SerialCommander::StartListeningSync(std::string com)
+{
+    m_isComPortListened = true;
+    try 
+    {
+        m_port.open(com);
 
         // Set serial port options
-        port.set_option(serial_port_base::baud_rate(115200));
-        port.set_option(serial_port_base::flow_control(serial_port_base::flow_control::none));
-        port.set_option(serial_port_base::parity(serial_port_base::parity::none));
-        port.set_option(serial_port_base::stop_bits(serial_port_base::stop_bits::one));
-        port.set_option(serial_port_base::character_size(8));
+        m_port.set_option(serial_port_base::baud_rate(115200));
+        m_port.set_option(serial_port_base::flow_control(serial_port_base::flow_control::none));
+        m_port.set_option(serial_port_base::parity(serial_port_base::parity::none));
+        m_port.set_option(serial_port_base::stop_bits(serial_port_base::stop_bits::one));
+        m_port.set_option(serial_port_base::character_size(8));
 
+        // Maybe wait to setup is done
         std::this_thread::sleep_for(std::chrono::seconds(1));
-
-        // Writing data to the serial port
-        std::string message = "position\n";
-        write(port, buffer(message.c_str(), message.size()));
 
         char c;
         std::string response;
-
         int counter = 0;
         // Read data from the serial port
-        while (read(port, buffer(&c, 1))) {
+        while (boost::asio::read(m_port, buffer(&c, 1)))
+        {
             response += c;
-            if (c == '\n') {
+            if (c == '\n') 
+            {
                 std::cout << "Received: " << response;
                 response.clear();
                 counter++;
             }
         }
     }
-    catch (std::exception& e) {
+    catch (std::exception& e) 
+    {
         std::cerr << "Error on listening to the com port: " << e.what() << std::endl;
     }
+    std::cout << "Ending port " << com << " listening!" << std::endl;
+    m_isComPortListened = false;
 }
 
 void SerialCommander::StopListening()
 {
+    m_port.close();
+    m_io.stop();
+}
+
+bool SerialCommander::IsListening()
+{
+    return m_isComPortListened;
+}
+
+void SerialCommander::SendCommand(const std::string& command)
+{
+    if (m_port.is_open())
+    {
+        boost::asio::write(m_port, boost::asio::buffer(command.c_str(), command.size()));
+    }
 }
 
 std::vector<std::string> SerialCommander::GetComports()
@@ -113,4 +140,18 @@ void SerialCommander::ScanForComPorts()
 bool SerialCommander::IsScanningComports()
 {
     return m_comPortsAreScanned;
+}
+
+void SerialCommander::SetCommand(const std::string& command)
+{
+    std::unique_lock lock(m_commandLock);
+    m_command = command;
+}
+
+std::string SerialCommander::GetCommand()
+{
+    std::unique_lock lock(m_commandLock);
+    std::string latestCommand = m_command;
+    m_command.clear(); // reset
+    return latestCommand;
 }
