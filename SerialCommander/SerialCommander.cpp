@@ -141,17 +141,3 @@ bool SerialCommander::IsScanningComports()
 {
     return m_comPortsAreScanned;
 }
-
-void SerialCommander::SetCommand(const std::string& command)
-{
-    std::unique_lock lock(m_commandLock);
-    m_command = command;
-}
-
-std::string SerialCommander::GetCommand()
-{
-    std::unique_lock lock(m_commandLock);
-    std::string latestCommand = m_command;
-    m_command.clear(); // reset
-    return latestCommand;
-}

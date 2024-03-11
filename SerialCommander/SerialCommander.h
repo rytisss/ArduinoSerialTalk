@@ -65,15 +65,6 @@ private:
 	boost::asio::io_service m_io;
 	// port listener
 	boost::asio::serial_port m_port;
-
-	// send command setting lock
-	std::mutex m_commandLock;
-	// command itself
-	std::string m_command;
-	// [thread-safe] set command
-	void SetCommand(const std::string& command);
-	// [thread-safe] get command and reset the to "" (empty)
-	std::string GetCommand();
 };
 
 #endif //SERIALCOMMANDER_H
