@@ -15,8 +15,11 @@
 #define SERIALCOMMANDER __attribute__((visibility("default")))
 #endif
 #include <vector>
+#include <mutex>
 #include <string>
+#include <thread>
 #include <boost/asio.hpp>
+#include <boost/signals2.hpp>
 
 //class that does nothing
 class SERIALCOMMANDER_API SerialCommander
@@ -24,8 +27,32 @@ class SERIALCOMMANDER_API SerialCommander
 public:
 	SerialCommander();
 	~SerialCommander();
+	// Lets start listening and commanding specified comport
 	void StartListening(std::string com);
-	static std::vector<std::string> GetComports();
+	// Stop listening for comport
+	void StopListening();
+	// retrieves the latest discovered comports
+	std::vector<std::string> GetComports();
+	// Scan for comports (async)
+	void ScanForComPorts();
+	// Status if the scanning of com port is ongoing
+	bool IsScanningComports();
+
+private:
+	// latest discovered comports
+	std::vector<std::string> m_comPorts;
+	// comport update lock
+	std::mutex m_comPortUpdateLock;
+	// [thread-safe] update comports
+	void UpdataComports(std::vector<std::string>& newComPorts);
+	// Blocking ports scan. Externally should be accessed through GetComports()
+	void GetComportsBlocking();
+	// listening thread
+	std::jthread m_listeningThread;
+	// com ports scanning flag, indicated if com ports scanning is active at the moment
+	std::atomic_bool m_comPortsAreScanned;
+	// currently listened comport
+	std::string m_currentComPort;
 };
 
 #endif //SERIALCOMMANDER_H

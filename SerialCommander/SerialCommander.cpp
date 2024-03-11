@@ -8,6 +8,7 @@
 using namespace boost::asio;
 
 SerialCommander::SerialCommander()
+    : m_comPortsAreScanned(false)
 {
 }
 
@@ -48,34 +49,68 @@ void SerialCommander::StartListening(std::string com)
                 response.clear();
                 counter++;
             }
-            // send command
-            if (counter == 20)
-            {
-                message = "position\n";
-                write(port, buffer(message.c_str(), message.size()));
-            }
         }
     }
     catch (std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
+        std::cerr << "Error on listening to the com port: " << e.what() << std::endl;
     }
+}
+
+void SerialCommander::StopListening()
+{
 }
 
 std::vector<std::string> SerialCommander::GetComports()
 {
-#ifdef _WIN32
-    std::vector<std::string> ports;
+    std::unique_lock lock(m_comPortUpdateLock);
+    return m_comPorts;
+}
 
-    // Enumerate serial ports
-    for (int i = 1; i <= 16; ++i) {
-        std::string portName = "COM" + std::to_string(i);
-        HANDLE handle = CreateFile(portName.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
-        if (handle != INVALID_HANDLE_VALUE) {
-            ports.push_back(portName);
-            CloseHandle(handle);
+void SerialCommander::UpdataComports(std::vector<std::string>& newComPorts)
+{
+    std::unique_lock lock(m_comPortUpdateLock);
+    m_comPorts = newComPorts;
+}
+
+void SerialCommander::GetComportsBlocking()
+{
+    m_comPortsAreScanned = true;
+    std::vector<std::string> ports;
+    try
+    {
+#ifdef _WIN32
+        // Enumerate serial ports
+        for (int i = 1; i <= 16; ++i)
+        {
+            std::string portName = "COM" + std::to_string(i);
+            HANDLE handle = CreateFile(portName.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
+            if (handle != INVALID_HANDLE_VALUE)
+            {
+                ports.push_back(portName);
+                CloseHandle(handle);
+            }
         }
-    }
-    return ports;
+        UpdataComports(ports);
 #endif
-    return std::vector<std::string>();
+    }
+    catch (std::exception& ex)
+    {
+        std::cout << "Failed to scan com ports!: " << ex.what() << std::endl;
+    }
+    m_comPortsAreScanned = false;
+}
+
+void SerialCommander::ScanForComPorts()
+{
+    if (m_comPortsAreScanned)
+    {
+        return;
+    }
+    std::thread comPortScanningThread = std::thread(&SerialCommander::GetComportsBlocking, this);
+    comPortScanningThread.detach();
+}
+
+bool SerialCommander::IsScanningComports()
+{
+    return m_comPortsAreScanned;
 }

@@ -12,7 +12,7 @@ set(CMAKE_BUILD_PARALLEL_LEVEL)
 set(Boost_USE_STATIC_LIBS   ON)
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
-find_package (Boost 1.79.0 COMPONENTS system filesystem REQUIRED)
+find_package (Boost COMPONENTS system filesystem REQUIRED)
 
 include_directories(
 	${Boost_INCLUDE_DIR}

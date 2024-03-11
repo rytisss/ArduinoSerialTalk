@@ -3,8 +3,7 @@ cmake_minimum_required(VERSION 3.17.0)
 project(SerialCommander)
 set(CMAKE_BUILD_PARALLEL_LEVEL)
 
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_definitions( -DSERIALCOMMANDER_EXPORT )
@@ -15,7 +14,7 @@ endif(APPLE)
 set(Boost_USE_STATIC_LIBS   ON)
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
-find_package(Boost 1.79.0 COMPONENTS system REQUIRED)
+find_package(Boost COMPONENTS system REQUIRED)
 
 include_directories(
 	${OpenCV_INCLUDE_DIRS}

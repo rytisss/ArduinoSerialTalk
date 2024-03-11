@@ -32,8 +32,20 @@ void ArduinoSerialWindow::RenderInternal()
 	ImGui::Text("Implement...");
 	if (ImGui::Button("Scan COM ports"))
 	{
-		m_coms = SerialCommander::GetComports();
+		m_commander.ScanForComPorts();
 	}
+	if (m_commander.IsScanningComports())
+	{
+		// dot dot dot dot dot for to indicate scanning
+		double to = ImGui::GetTime();
+		int timeStateStatus = (int)(ImGui::GetTime()) % 5 + 1;
+		for (size_t i = 0; i < timeStateStatus; i++)
+		{
+			ImGui::SameLine();
+			ImGui::Text(".");
+		}
+	}
+	m_coms = m_commander.GetComports();
 	ImGui::Text("Available COMs:");
 	for (size_t i = 0; i < m_coms.size(); i++)
 	{
@@ -41,12 +53,6 @@ void ArduinoSerialWindow::RenderInternal()
 	}
 	if (ImGui::Button("Start Listening"))
 	{
-		// pick last
-		if (m_coms.size() > 0)
-		{
-			SerialCommander commander;
-			commander.StartListening(m_coms[m_coms.size() - 1]);
-		}
 	}
 	ImGui::End();
 }

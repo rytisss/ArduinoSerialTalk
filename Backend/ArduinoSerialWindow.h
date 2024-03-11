@@ -24,6 +24,8 @@ private:
 
 	std::vector<std::string> m_coms;
 
+	SerialCommander m_commander;
+
 };
 
 #endif //GRAPHICALBACKENDIMPL_H
