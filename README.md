@@ -1,2 +1,2 @@
 # ArduinoSerialTalk
-Serial communication with Arduino under the hoof of Dear Imgui
+Serial communication with Arduino under the hood of Dear Imgui
